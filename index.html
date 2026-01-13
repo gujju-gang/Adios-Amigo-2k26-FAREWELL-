@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Adios Amigo 2k26 Sample</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+
+<link rel="preload" href="assets/sounds/popper.mp3" as="audio">
+<link rel="preload" href="assets/sounds/yell.mp3" as="audio">
+
+  <style>
+   #final-paragraph {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  text-align: left;
+}
+  
+
+    html, body { height: 100%; scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: #f5f0e6;
+      color: #2b2b2b;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      text-align: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* background text layer */
+    .bg-texts { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; will-change: transform; }
+    .bg-texts .bg-line { position: absolute; left: 0; white-space: nowrap; user-select: none; pointer-events: none; opacity: 0.18; color: rgba(43,43,43,0.95); transform-origin: left center; will-change: transform, top, left; }
+
+    /* main content */
+    .content { position: relative; z-index: 30; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px; }
+    .welcome { font-size: 48px; font-weight: bold; color: white; -webkit-text-stroke: 1px black; text-stroke: 1px black; margin: 0; line-height: 1; }
+    .subheading { font-size: 24px; margin: 0; position: relative; z-index: 31; line-height: 1; }
+    .title { font-family: 'Brush Script MT', cursive; font-size: 60px; margin-top: -5px; position: relative; z-index: 31; line-height: 1; }
+    .buttons { margin-top: 20px; display: flex; flex-direction: row; justify-content: center; position: relative; }
+    .btn { padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer; background-color: #2b2b2b; color: #fff; font-size: 18px; margin: 10px; transition: 0.3s; position: relative; z-index: 40; display: inline-flex; align-items: center; justify-content: center; }
+    .btn:hover { transform: scale(1.05); }
+    .btn-text.glitch { position: relative; text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff, 0.025em 0.04em 0 #fffc00; animation: glitch 725ms infinite; }
+    @keyframes glitch { 0% { text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff, 0.025em 0.04em 0 #fffc00; } 16% { text-shadow: -0.05em -0.025em 0 #00fffc, 0.025em 0.035em 0 #fc00ff, -0.05em -0.05em 0 #fffc00; } 50% { text-shadow: 0.05em 0.035em 0 #00fffc, 0.03em 0 0 #fc00ff, 0 -0.04em 0 #fffc00; } 100% { text-shadow: -0.05em 0 0 #00fffc, -0.025em -0.04em 0 #fc00ff, -0.04em -0.025em 0 #fffc00; } }
+
+    /* takeover container with two stacked sections */
+    #takeover-content {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #2b2b2b;
+      color: #fff;
+      display: none;
+      z-index: 10000;
+      overflow: hidden; /* we'll animate slide manually */
+    }
+
+    /* section layout inside takeover */
+    #section1, #section2 {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: transform 700ms cubic-bezier(.2,.9,.2,1);
+      will-change: transform;
+    }
+    #section1 { top: 0; transform: translateY(0); }
+    #section2 { top: 100vh; transform: translateY(0); } /* placed below, we'll slide section1 up to reveal section2 */
+
+    /* arc typing containers */
+    .typing-line { position: relative; display: block; white-space: nowrap; overflow: visible; border-right: 0.15em solid #fff; font-family: Inter, sans-serif; font-weight: 900; text-shadow: 2px 4px 6px rgba(0,0,0,0.3); height: 1em; }
+    .typing-line span { position: absolute; display: inline-block; transform-origin: center center; pointer-events: none; }
+
+    /* ABOUT THE FAREWELL styling — only the word FAREWELL with warm bg */
+    #about-text { font-size: 56px; margin: 0; padding: 20px 10px; font-family: 'Inter', sans-serif; font-weight: 900; color: #fff; text-shadow: 2px 4px 6px rgba(0,0,0,0.3); }
+    #about-text .farewell {
+      font-family: 'Great Vibes', cursive;
+      color: #4b2e00;
+      background: rgba(255,210,150,0.55);
+      padding: 6px 10px;
+      border-radius: 8px;
+      display: inline-block;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+    }
+
+    /* emoji scroll marker */
+    #scroll-marker {
+      position: fixed;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%) translateY(12px);
+      z-index: 20000;
+      font-size: 38px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 320ms ease, transform 320ms ease;
+      will-change: opacity, transform;
+    }
+    #scroll-marker.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 600px) {
+      #about-text { font-size: 36px; padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-texts" id="bgTexts" aria-hidden="true"></div>
+
+  <div class="content">
+    <h1 class="welcome">WELCOME</h1>
+    <h2 class="subheading">TO THE FAREWELL</h2>
+    <h1 class="title">ADIOS AMIGO 2K26</h1>
+
+    <div class="buttons">
+      <button class="btn" id="comingBtn">I AM COMING</button>
+      <button class="btn" id="mehBtn"><span class="btn-text">MEHHHHH---!!</span></button>
+    </div>
+  </div>
+
+  <!-- audio placeholders -->
+ <audio id="popperAudio" preload="auto" style="display:none" src="Assets/sounds/1gift-confetti-447240.mp3"></audio>
+<audio id="yellAudio" preload="auto" style="display:none" src="Assets/sounds/retro-hurt-1-236672.mp3"></audio>
+
+ <!-- enable-sound prompt (hidden by default; shown only if autoplay blocked) -->
+  <div id="enable-sound"
+       style="position:fixed;left:50%;top:14px;transform:translateX(-50%);background:rgba(0,0,0,0.66);color:#fff;padding:8px 14px;border-radius:999px;z-index:20000;display:none;cursor:pointer;font-weight:700;font-family:Inter, sans-serif;font-size:13px;">
+    Tap to enable sound
+  </div>
+
+  <!-- takeover with two sections -->
+  <div id="takeover-content" aria-hidden="true">
+    <div id="section1">
+      <div id="welcome-text" class="typing-line" aria-hidden="true"></div>
+      <div id="glad-text" class="typing-line" aria-hidden="true"></div>
+    </div>
+    <div id="section2">
+      <div id="about-text">ABOUT THE <span class="farewell">FAREWELL</span>!!</div>
+    </div>
+  </div>
+
+  <!-- emoji scroll marker -->
+  <div id="scroll-marker" aria-hidden="true">📍</div>
+
+  <script>
+    /* Background glide (unchanged logic but tweaked jitter & opacity earlier). */
+    const BG_PHRASE = 'ADIOS AMIGO 2K26';
+    let bgLinePool = [], bgRAF = null, lastFrameTime = null;
+    function populateBgTexts() {
+      cancelBgAnimation(); bgLinePool = [];
+      const container = document.getElementById('bgTexts');
+      container.innerHTML = '';
+      const titleEl = document.querySelector('.title');
+      const titleFontSize = titleEl ? parseFloat(getComputedStyle(titleEl).fontSize) : 60;
+      const bgFontSize = Math.max(12, Math.round(titleFontSize * 0.36));
+      const meas = document.createElement('span');
+      meas.style.fontFamily = getComputedStyle(titleEl).fontFamily || 'cursive';
+      meas.style.fontSize = bgFontSize + 'px';
+      meas.style.position = 'absolute'; meas.style.whiteSpace = 'nowrap'; meas.style.visibility = 'hidden';
+      meas.textContent = BG_PHRASE; document.body.appendChild(meas);
+      const measured = meas.getBoundingClientRect(); const textH = Math.ceil(measured.height);
+      document.body.removeChild(meas);
+      const lineHeight = Math.ceil(textH * 1.5);
+      const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+      const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+      const lines = Math.ceil(vh / lineHeight) + 4;
+      for (let i=0;i<lines;i++){
+        const line = document.createElement('div');
+        line.className = 'bg-line';
+        line.textContent = BG_PHRASE;
+        line.style.fontFamily = getComputedStyle(titleEl).fontFamily || 'cursive';
+        line.style.fontSize = bgFontSize + 'px';
+        line.style.lineHeight = '1';
+        const baseTop = (i - 1) * lineHeight - Math.floor(lineHeight * 0.15);
+        const jitterY = Math.floor((Math.random() * lineHeight * 0.45) - (lineHeight * 0.225));
+        const top = baseTop + jitterY;
+        line.style.top = `${top}px`;
+        const rot = (Math.random() * 2 - 1) * 1.5;
+        const startFromRight = Math.random() < 0.5;
+        const centerX = Math.floor(vw/2);
+        const randomOffsetNearCenter = Math.floor((Math.random() * vw * 0.4) - vw * 0.2);
+        let initialX = startFromRight ? (vw + Math.random() * vw * 0.4) : (centerX + randomOffsetNearCenter);
+        const speed = Math.random() * 30 + 30 + Math.random() * 20;
+        line.style.transform = `translateX(${initialX}px) rotate(${rot}deg)`;
+        container.appendChild(line);
+        const actualW = Math.ceil(line.getBoundingClientRect().width);
+        bgLinePool.push({ el: line, x: initialX, width: actualW, speed: speed, rot: rot, top: top });
+      }
+      lastFrameTime = performance.now(); bgRAF = requestAnimationFrame(bgTick);
+    }
+    function bgTick(now) {
+      if (!lastFrameTime) lastFrameTime = now;
+      const dt = Math.min(60, now - lastFrameTime) / 1000;
+      lastFrameTime = now;
+      const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+      for (let i=0;i<bgLinePool.length;i++){
+        const item = bgLinePool[i];
+        item.x -= item.speed * dt;
+        const pad = 20;
+        if (item.x + item.width < -pad) {
+          item.x = vw + pad + Math.random() * (vw * 0.25);
+          item.speed = Math.max(20, item.speed + (Math.random() * 16 - 8));
+          item.rot = (Math.random() * 2 - 1) * 1.5;
+        }
+        item.el.style.transform = `translateX(${item.x}px) rotate(${item.rot}deg)`;
+      }
+      bgRAF = requestAnimationFrame(bgTick);
+    }
+    function cancelBgAnimation(){ if (bgRAF) cancelAnimationFrame(bgRAF); bgRAF = null; lastFrameTime = null; }
+    window.addEventListener('resize', () => setTimeout(populateBgTexts, 120));
+    document.addEventListener('DOMContentLoaded', populateBgTexts);
+
+    /* --- audio synth / fallbacks (kept) --- */
+    let audioCtx = null;
+    function ensureAudioContext() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); return audioCtx; }
+        // Try to play an <audio> element and return a Promise.
+    // IMPORTANT: do NOT automatically call the synth fallback when autoplay is blocked,
+    // because that creates sound later on arbitrary clicks. Fallback is only used when
+    // the audio element is missing or when explicitly requested from a user gesture.
+    function tryPlayAudio(id, fallbackFn) {
+      const el = document.getElementById(id);
+      if (el && el.src) {
+        el.currentTime = 0;
+        return el.play().catch((err) => {
+          // Autoplay blocked — log and return rejection so caller can handle user-gesture fallback.
+          console.log('Autoplay blocked for audio:', id, err && err.name ? err.name : err);
+          return Promise.reject(err);
+        });
+      } else {
+        // If there's no audio element and a fallback is provided, call it immediately.
+        if (typeof fallbackFn === 'function') {
+          try { fallbackFn(); return Promise.resolve(); } catch (e) { return Promise.reject(e); }
+        }
+        return Promise.reject(new Error('no-audio-element'));
+      }
+    }
+
+    // Helper: call fallback but only from a real user gesture (caller must ensure gesture)
+    function tryPlayFallbackWithGesture(id, fallbackFn) {
+      const el = document.getElementById(id);
+      if (el && el.src) {
+        el.currentTime = 0;
+        return el.play().catch(() => {
+          if (typeof fallbackFn === 'function') fallbackFn();
+        });
+      } else {
+        if (typeof fallbackFn === 'function') fallbackFn();
+      }
+    }
+
+    function synthPopper(){ const ctx=ensureAudioContext(); const now=ctx.currentTime; const dur=0.12; const buffer=ctx.createBuffer(1, ctx.sampleRate*dur, ctx.sampleRate); const data=buffer.getChannelData(0); for(let i=0;i<data.length;i++) data[i]=(Math.random()*2-1)*(1 - i/data.length); const src=ctx.createBufferSource(); src.buffer=buffer; const filt=ctx.createBiquadFilter(); filt.type='highpass'; filt.frequency.setValueAtTime(800, now); const gain=ctx.createGain(); gain.gain.setValueAtTime(0.001, now); gain.gain.exponentialRampToValueAtTime(0.9, now+0.01); gain.gain.exponentialRampToValueAtTime(0.001, now+dur); src.connect(filt).connect(gain).connect(ctx.destination); src.start(now); src.stop(now+dur+0.02); }
+    function synthWhoosh(){ const ctx=ensureAudioContext(); const duration=0.7; const buffer=ctx.createBuffer(1, ctx.sampleRate*duration, ctx.sampleRate); const data=buffer.getChannelData(0); for(let i=0;i<data.length;i++) data[i]=(Math.random()*2-1)*(1 - i/data.length); const src=ctx.createBufferSource(); src.buffer=buffer; const filter=ctx.createBiquadFilter(); filter.type='lowpass'; filter.frequency.setValueAtTime(1200, ctx.currentTime); filter.frequency.exponentialRampToValueAtTime(300, ctx.currentTime+duration); const gain=ctx.createGain(); gain.gain.setValueAtTime(0.0001, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.6, ctx.currentTime+0.02); gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+duration); src.connect(filter).connect(gain).connect(ctx.destination); src.start(); src.stop(ctx.currentTime+duration+0.1); }
+    function synthYell(){ const ctx=ensureAudioContext(); const now=ctx.currentTime; const duration=0.9; const osc=ctx.createOscillator(); osc.type='sawtooth'; osc.frequency.setValueAtTime(520, now); osc.frequency.exponentialRampToValueAtTime(180, now + duration*0.6); const wave=new (window.WaveShaperNode || window.ScriptProcessorNode)(); /* fallback simple */; const gain=ctx.createGain(); gain.gain.setValueAtTime(0.001, now); gain.gain.exponentialRampToValueAtTime(1.2, now+0.02); gain.gain.exponentialRampToValueAtTime(0.001, now+duration); const noiseBuf=ctx.createBuffer(1, ctx.sampleRate*duration, ctx.sampleRate); const noiseData=noiseBuf.getChannelData(0); for(let i=0;i<noiseData.length;i++) noiseData[i]=(Math.random()*2-1)*0.6*(1 - i/noiseData.length); const noiseSrc=ctx.createBufferSource(); noiseSrc.buffer=noiseBuf; osc.connect(gain); noiseSrc.connect(gain); gain.connect(ctx.destination); osc.start(now); noiseSrc.start(now); osc.stop(now+duration); noiseSrc.stop(now+duration); }
+    function playPopper(){ tryPlayAudio('popperAudio', synthPopper); }
+    function playWhoosh(){ tryPlayAudio('whooshAudio', synthWhoosh); }
+    function playYell(){ tryPlayAudio('yellAudio', synthYell); }
+
+    /* teleport & shatter (unchanged) */
+    let teleportCount = 0, maxTeleports = 5, isTeleporting = false, placeholderNode = null;
+    function randomButtonCenter(btnRect){ const margin=12; const vw=window.innerWidth, vh=window.innerHeight; const btnW=btnRect.width, btnH=btnRect.height; const minX=margin + btnW/2, maxX=vw - margin - btnW/2; const minY=margin + btnH/2, maxY=vh - margin - btnH/2; return { x: Math.random() * (maxX-minX) + minX, y: Math.random() * (maxY-minY) + minY }; }
+    async function teleportButtonOnce(mehBtn){ if (isTeleporting) return; isTeleporting = true; const rect = mehBtn.getBoundingClientRect(); if (!placeholderNode) { placeholderNode = document.createElement('div'); placeholderNode.className = 'btn placeholder'; placeholderNode.style.width = `${rect.width}px`; placeholderNode.style.height = `${rect.height}px`; placeholderNode.style.display = getComputedStyle(mehBtn).display || 'inline-flex'; placeholderNode.style.visibility = 'hidden'; // hide while preserving layout
+      mehBtn.parentNode.insertBefore(placeholderNode, mehBtn); } mehBtn.style.transition = 'transform 220ms ease, opacity 220ms ease, left 260ms cubic-bezier(.2,.8,.2,1), top 260ms cubic-bezier(.2,.8,.2,1)'; mehBtn.style.transformOrigin = 'center center'; mehBtn.style.transform = 'scale(0.2)'; mehBtn.style.opacity = '0'; await new Promise(r => setTimeout(r, 240)); const currentCenterX = rect.left + rect.width/2; const currentCenterY = rect.top + rect.height/2; mehBtn.style.position = 'fixed'; mehBtn.style.left = `${currentCenterX - rect.width/2}px`; mehBtn.style.top = `${currentCenterY - rect.height/2}px`; mehBtn.style.margin = '0'; mehBtn.style.zIndex = 50; const newCenter = randomButtonCenter(rect); await new Promise(r => setTimeout(r, 80)); mehBtn.style.left = `${newCenter.x - rect.width/2}px`; mehBtn.style.top = `${newCenter.y - rect.height/2}px`; mehBtn.style.transform = 'scale(1)'; mehBtn.style.opacity = '1'; await new Promise(r => setTimeout(r, 260)); mehBtn.style.transition = ''; mehBtn.style.zIndex = ''; isTeleporting = false; }
+
+    function startShatterSequence(mehBtn){
+      const mehText = mehBtn.querySelector('.btn-text');
+      const rect = mehBtn.getBoundingClientRect();
+      mehText.classList.add('glitch');
+      setTimeout(()=>playYell(), 500);
+      for (let i=0;i<20;i++){
+        const piece = document.createElement('div');
+        piece.style.position = 'fixed';
+        piece.style.width = `${Math.random()*20 + 10}px`;
+        piece.style.height = `${Math.random()*20 + 10}px`;
+        piece.style.background = '#2b2b2b';
+        piece.style.left = `${rect.left + Math.random()*rect.width}px`;
+        piece.style.top  = `${rect.top + Math.random()*rect.height}px`;
+        piece.style.borderRadius = `${Math.random()*50}%`;
+        document.body.appendChild(piece);
+        const rot = Math.random()*720 - 360;
+        const dx = Math.random()*200 - 100;
+        const dy = window.innerHeight - rect.top + Math.random()*100;
+        piece.animate([{ transform: 'translate(0, 0) rotate(0deg)', opacity: 1 }, { transform: `translate(${dx}px, ${dy}px) rotate(${rot}deg)`, opacity: 0 }], { duration: 1500 + Math.random()*1000, easing: 'ease-in', fill: 'forwards' });
+        setTimeout(()=>piece.remove(), 3000);
+      }
+      const text = mehText.textContent;
+      mehText.innerHTML = '';
+      const letters = text.split('');
+      letters.forEach((letter, i) => {
+        const span = document.createElement('span');
+        span.textContent = letter;
+        span.style.position = 'fixed';
+        span.style.left = `${rect.left + (rect.width / letters.length) * i + Math.random()*10 - 5}px`;
+        span.style.top  = `${rect.top + rect.height/2}px`;
+        span.style.color = '#fff';
+        span.style.fontSize = getComputedStyle(mehText).fontSize;
+        document.body.appendChild(span);
+        const rot = Math.random()*720 - 360;
+        const dx = Math.random()*100 - 50;
+        const dy = window.innerHeight - rect.top + Math.random()*100;
+        span.animate([{ transform: 'translate(0,0) rotate(0deg)', opacity: 1 }, { transform:`translate(${dx}px, ${dy}px) rotate(${rot}deg)`, opacity: 0 }], { duration: 1500 + Math.random()*1000, easing: 'ease-in', fill: 'forwards' });
+        setTimeout(()=>span.remove(), 3000);
+      });
+      mehBtn.style.opacity = '0';
+      mehBtn.style.pointerEvents = 'none';
+      setTimeout(() => {
+        // --- UPDATED BEHAVIOR: remove the button AND the placeholder so nothing remains in its place ---
+        // This removes the blank element that previously remained post-shatter.
+        if (placeholderNode && placeholderNode.parentNode) {
+          // remove the actual button if still present
+          if (mehBtn.parentNode) mehBtn.parentNode.removeChild(mehBtn);
+          // remove placeholder so nothing occupies the space
+          placeholderNode.parentNode.removeChild(placeholderNode);
+          placeholderNode = null;
+        } else {
+          // if, for any reason, a placeholder wasn't present, just remove the button node
+          if (mehBtn.parentNode) mehBtn.parentNode.removeChild(mehBtn);
+        }
+      }, 2500);
+    }
+
+    document.getElementById('mehBtn').addEventListener('click', async function () {
+      if (isTeleporting) return;
+      const mehBtn = this;
+      if (teleportCount < maxTeleports) {
+        await teleportButtonOnce(mehBtn);
+        teleportCount++;
+        return;
+      } else {
+        startShatterSequence(mehBtn);
+        return;
+      }
+    });
+
+    /* ============ ARC typing with corrected tilt ============ */
+    function measureTextWidth(text, fontFamily = 'Inter, sans-serif', fontSizePx = 48) {
+      const s = document.createElement('span');
+      s.style.position = 'absolute';
+      s.style.visibility = 'hidden';
+      s.style.whiteSpace = 'pre';
+      s.style.fontFamily = fontFamily;
+      s.style.fontSize = fontSizePx + 'px';
+      s.textContent = text;
+      document.body.appendChild(s);
+      const w = s.getBoundingClientRect().width || (text.length * fontSizePx * 0.6);
+      document.body.removeChild(s);
+      return w;
+    }
+
+    function typeWriterArc(containerEl, text, letterDelay = 90, arcHeightPx = null, topPx = 0, targetWidthPx = null) {
+      containerEl.innerHTML = '';
+      containerEl.style.position = 'absolute';
+      containerEl.style.top = `${topPx}px`;
+      containerEl.style.left = '0px';
+      containerEl.style.margin = '0';
+      containerEl.style.padding = '0';
+      containerEl.style.whiteSpace = 'nowrap';
+      containerEl.style.display = 'block';
+      containerEl.style.borderRight = '0.15em solid #fff';
+
+      const spans = [];
+      for (let i=0;i<text.length;i++){
+        const sp = document.createElement('span');
+        sp.textContent = text[i];
+        sp.style.position = 'absolute';
+        sp.style.left = '0px';
+        sp.style.top = '0px';
+        sp.style.opacity = '0';
+        sp.style.whiteSpace = 'pre';
+        sp.style.pointerEvents = 'none';
+        containerEl.appendChild(sp);
+        spans.push(sp);
+      }
+
+      // base font size heuristic
+      const baseFont = 72;
+      containerEl.style.fontSize = baseFont + 'px';
+
+      function measureTotalWidth(){
+        let total = 0;
+        for (let s of spans) {
+          const w = Math.ceil(s.getBoundingClientRect().width) || Math.ceil(baseFont * 0.6);
+          total += w;
+        }
+        return total;
+      }
+
+      let measured = measureTotalWidth();
+
+      if (typeof targetWidthPx === 'number' && measured > 0) {
+        const multiplier = targetWidthPx / measured;
+        const safeMultiplier = Math.min(Math.max(multiplier, 0.2), 12);
+        const newFont = Math.max(12, Math.round(baseFont * safeMultiplier));
+        containerEl.style.fontSize = newFont + 'px';
+        measured = measureTotalWidth();
+      }
+
+      const totalWidth = measured;
+      containerEl.style.width = `${totalWidth}px`;
+      const measuredH = Math.ceil(spans[0] ? spans[0].getBoundingClientRect().height : parseFloat(getComputedStyle(containerEl).fontSize) || 36);
+      containerEl.style.height = `${measuredH * 2}px`;
+
+      // arc geometry
+      const L = totalWidth;
+      const defaultArc = Math.max(24, Math.min(260, L * 0.12));
+      const h = (typeof arcHeightPx === 'number') ? arcHeightPx : defaultArc;
+      const R = (h*h + (L/2)*(L/2)) / (2*h);
+      const centerX = L/2;
+      const centerY = R;
+
+      // compute letter widths, positions
+      let cumul = 0;
+      const metrics = spans.map((el) => {
+        const w = Math.ceil(el.getBoundingClientRect().width) || Math.ceil(parseFloat(getComputedStyle(el).fontSize) * 0.6) || 12;
+        const left = cumul;
+        cumul += w;
+        return { el, w, left };
+      });
+
+      // position each letter on arc and compute proper tilt (tangent-aligned)
+      metrics.forEach(({ el, w, left }, i) => {
+        const xCenter = left + w/2;
+        const dx = Math.max(-R + 1, Math.min(R - 1, xCenter - centerX));
+        const y = centerY - Math.sqrt(Math.max(0, R*R - dx*dx));
+        const fontSize = parseFloat(getComputedStyle(el).fontSize) || 36;
+        const baselineAdjust = fontSize * 0.45;
+        const topPos = Math.round(y - baselineAdjust);
+
+        // angle computed as tangent angle: atan2(centerY - y, dx)
+        const angle = Math.atan2(centerY - y, dx);
+        const angleDeg = angle * 180 / Math.PI;
+
+        // ----- CORRECTED ROTATION -----
+        // Use rotateDeg = 90 - angleDeg so letters on the left tilt left (negative)
+        // and letters on the right tilt right (positive), producing a natural arc.
+        const rotateDeg = 90 - angleDeg;
+
+        el.style.left = `${left}px`;
+        el.style.top = `${topPos}px`;
+        el.style.transform = `translateY(0px) rotate(${rotateDeg}deg)`;
+        el.style.transformOrigin = 'center center';
+        el.style.opacity = '0';
+      });
+
+      // reveal sequentially
+      metrics.forEach(({ el }, i) => {
+        const revealDelay = i * letterDelay;
+        const baseTransform = el.style.transform;
+        el.animate([
+          { transform: baseTransform.replace('rotate', 'translateY(10px) rotate'), opacity: 0 },
+          { transform: baseTransform, opacity: 1 }
+        ], {
+          duration: 260,
+          easing: 'cubic-bezier(.2,.9,.2,1)',
+          delay: revealDelay,
+          fill: 'forwards'
+        });
+      });
+
+      // center horizontally within viewport
+      const leftCenter = Math.max(0, Math.round((window.innerWidth - totalWidth) / 2));
+      containerEl.style.left = `${leftCenter}px`;
+      // remove cursor after finish
+      setTimeout(()=>{ containerEl.style.borderRight = 'none'; }, metrics.length * letterDelay + 300);
+    }
+
+/* ============ Slide logic & setup ============ */
+const takeover = document.getElementById('takeover-content');
+const section1 = document.getElementById('section1');
+const section2 = document.getElementById('section2');
+const welcomeContainer = document.getElementById('welcome-text');
+const gladContainer = document.getElementById('glad-text');
+const aboutText = document.getElementById('about-text');
+const scrollMarker = document.getElementById('scroll-marker');
+
+// --- NEW: create a third page (section3) dynamically so no HTML edits required ---
+const section3 = document.createElement('div');
+section3.id = 'section3';
+section3.style.position = 'absolute';
+section3.style.left = '0';
+section3.style.top = '200vh'; // third page, below section2
+section3.style.width = '100%';
+section3.style.height = '100vh';
+section3.style.boxSizing = 'border-box';
+section3.style.display = 'flex';
+section3.style.alignItems = 'center';
+section3.style.justifyContent = 'center';
+section3.style.transition = 'transform 700ms cubic-bezier(.2,.9,.2,1)';
+
+// ensure adequate bottom-safe padding in section3 so in-page content doesn't reach the fixed coupon
+section3.innerHTML = `
+  <div id="section3-inner" style="width:90%;height:90%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:22px 22px 120px 22px;box-sizing:border-box;">
+    <div id="section3-placeholder" style="font-family:Inter, sans-serif; font-weight:900; font-size:28px; color:#fff; padding:20px;margin-top:12px;">MORE AWAITS BELOW</div>
+    <!-- space reserved for code-flood and final paragraph (handled by existing script) -->
+    <div style="flex:1 1 auto; width:100%; display:flex; align-items:flex-end; justify-content:center; padding-bottom:18px;">
+      <!-- placeholder: removed inline coupon button so it won't be overlapped by flood/paragraph -->
+    </div>
+  </div>
+`;
+takeover.appendChild(section3);
+
+// remove the bottom emoji scroll marker entirely so it won't interfere
+(function removeScrollMarker(){
+  const marker = document.getElementById('scroll-marker');
+  if (marker && marker.parentNode) marker.parentNode.removeChild(marker);
+})();
+
+// create a fixed, clearly separated coupon container (outside section3) so nothing on the page overlaps it
+const couponContainer = document.createElement('div');
+couponContainer.id = 'coupon-container';
+couponContainer.style.position = 'fixed';
+couponContainer.style.bottom = '22px';
+couponContainer.style.left = '50%';
+couponContainer.style.transform = 'translateX(-50%)';
+couponContainer.style.zIndex = '13000'; // above code-flood (12000) and boundary (11000)
+couponContainer.style.pointerEvents = 'none'; // initially disabled
+couponContainer.style.display = 'flex';
+couponContainer.style.alignItems = 'center';
+couponContainer.style.justifyContent = 'center';
+couponContainer.style.padding = '6px';
+couponContainer.style.opacity = '0';           // hidden initially
+couponContainer.style.transition = 'opacity 320ms ease, transform 240ms ease';
+takeover.appendChild(couponContainer);
+
+// button (whitish glow shadow on opposite side of cursor)
+couponContainer.innerHTML = `
+  <button id="coupon-btn"
+    style="
+      -webkit-appearance:none;
+      appearance:none;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      padding: 12px 18px;
+      font-family: Inter, sans-serif;
+      font-weight:700;
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform 120ms ease, box-shadow 120ms ease;
+      outline: none;
+      backdrop-filter: blur(4px);
+    ">
+    ENTRY COUPONS??
+  </button>
+`;
+
+/* helper to reveal / hide coupon safely */
+function showCoupon() {
+  // only show when user is on the final page (safety)
+  if (typeof currentPage !== 'undefined' && currentPage !== 2) return;
+  couponContainer.style.pointerEvents = 'auto';
+  couponContainer.style.opacity = '1';
+  couponContainer.style.transform = 'translateX(-50%) translateY(0)';
+}
+function hideCoupon() {
+  couponContainer.style.pointerEvents = 'none';
+  couponContainer.style.opacity = '0';
+  couponContainer.style.transform = 'translateX(-50%) translateY(6px)';
+}
+
+(function attachCouponBehaviorFixed(){
+  const couponBtn = document.getElementById('coupon-btn');
+  if (!couponBtn) return;
+
+  // click opens COUPON.html in same tab
+  couponBtn.addEventListener('click', function (ev) {
+    ev.preventDefault();
+    window.open('COUPON.html', '_self');
+  });
+
+  // mousemove: compute cursor relative to button center and place shadow on opposite side
+  couponBtn.addEventListener('mousemove', function (ev) {
+    const rect = couponBtn.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dx = ev.clientX - cx;
+    const dy = ev.clientY - cy;
+    // invert dx/dy so shadow sits opposite cursor
+    const offsetX = Math.round(-dx / 12); // stronger sensitivity for visible effect
+    const offsetY = Math.round(-dy / 12);
+    // whitish shadow with larger blur so it shows over dark background and over code flood if needed
+    couponBtn.style.boxShadow = `${offsetX}px ${offsetY}px 22px rgba(255,255,255,0.85)`;
+    couponBtn.style.transform = 'translateZ(0) scale(1.03)';
+  });
+
+  couponBtn.addEventListener('mouseleave', function () {
+    couponBtn.style.boxShadow = 'none';
+    couponBtn.style.transform = 'translateZ(0) scale(1)';
+  });
+
+  // keyboard focus styling (so shadow appears when focused via keyboard)
+  couponBtn.addEventListener('focus', function () {
+    couponBtn.style.boxShadow = `0px 8px 26px rgba(255,255,255,0.36)`;
+  });
+  couponBtn.addEventListener('blur', function () {
+    couponBtn.style.boxShadow = 'none';
+  });
+
+  // small accessibility: show outline when navigating via keyboard
+  couponBtn.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' || e.key === ' ') couponBtn.click();
+  });
+})();
+
+let currentPage = 0; // 0 = section1, 1 = section2, 2 = section3
+let animatingSlide = false;
+const MAX_PAGE = 2;
+
+// --- BOUNDARY ANIMATION ELEMENTS (created once) ---
+const boundary = document.createElement('div');
+boundary.id = 'boundary-anim';
+boundary.style.position = 'absolute';
+boundary.style.left = '50%';
+boundary.style.transform = 'translateX(-50%)';
+boundary.style.pointerEvents = 'none';
+boundary.style.zIndex = '11000';
+boundary.dataset.init = 'false';
+takeover.appendChild(boundary);
+
+// left and right horizontal halves (start at center width=0)
+const leftLine = document.createElement('div');
+const rightLine = document.createElement('div');
+[leftLine, rightLine].forEach(l => {
+  l.style.position = 'absolute';
+  l.style.height = '2px';
+  l.style.background = '#fff';
+  l.style.top = '0';
+  l.style.transition = 'width 650ms ease, left 500ms ease, right 500ms ease, transform 600ms ease';
+  l.style.willChange = 'width, left, right, transform';
+  boundary.appendChild(l);
+});
+leftLine.style.right = '50%';
+leftLine.style.width = '0';
+leftLine.style.transformOrigin = 'right center';
+rightLine.style.left = '50%';
+rightLine.style.width = '0';
+rightLine.style.transformOrigin = 'left center';
+
+// optional vertical sides (for closing rectangle)
+const leftV = document.createElement('div');
+const rightV = document.createElement('div');
+[leftV, rightV].forEach(v => {
+  v.style.position = 'absolute';
+  v.style.width = '2px';
+  v.style.background = '#fff';
+  v.style.height = '0';
+  v.style.transition = 'height 600ms ease, left 600ms ease, right 600ms ease, transform 600ms ease';
+  v.style.willChange = 'height, left, right, transform';
+  boundary.appendChild(v);
+});
+leftV.style.left = '0';
+leftV.style.top = '0';
+rightV.style.right = '0';
+rightV.style.top = '0';
+
+// helper to compute ABOUT THE FAREWELL baseline top for initial placement
+function positionBoundaryInitial() {
+  const rect = aboutText.getBoundingClientRect();
+  // place boundary just below aboutText (viewport coordinates)
+  const desiredTop = rect.bottom + 12; // 12px gap
+  // convert to takeover-local coordinates (takeover is fixed at 0, so use viewport)
+  boundary.style.top = `${Math.max(12, Math.round(desiredTop))}px`;
+  boundary.dataset.initialTop = `${Math.round(desiredTop)}`;
+  boundary.dataset.init = 'true';
+}
+function resetBoundaryToCenter() {
+  leftLine.style.width = '0';
+  leftLine.style.right = '50%';
+  leftLine.style.left = '';
+  rightLine.style.width = '0';
+  rightLine.style.left = '50%';
+  rightLine.style.right = '';
+  leftV.style.height = '0';
+  rightV.style.height = '0';
+  leftV.style.left = '0';
+  rightV.style.right = '0';
+}
+
+// function to expand horizontals from center to edges
+function expandHorizontals() {
+  // target each half to half viewport width
+  const halfW = Math.round(window.innerWidth / 2);
+  leftLine.style.width = `${halfW}px`;
+  leftLine.style.right = '50%';
+  rightLine.style.width = `${halfW}px`;
+  rightLine.style.left = '50%';
+  // ensure verticals are reset
+  leftV.style.height = '0';
+  rightV.style.height = '0';
+}
+
+// function to descend boundary by one viewport height (used when moving to page 3)
+function descendBoundary() {
+  const initialTop = parseInt(boundary.dataset.initialTop || '0', 10);
+  const newTop = initialTop + window.innerHeight; // descend one viewport
+  boundary.style.transition = 'top 760ms cubic-bezier(.2,.9,.2,1)';
+  boundary.style.top = `${newTop}px`;
+}
+
+// function to close rectangle: shrink horizontals back to center and grow verticals to form sides
+function closeRectangle() {
+  // shrink horizontals to center
+  leftLine.style.width = '0';
+  leftLine.style.right = '50%';
+  rightLine.style.width = '0';
+  rightLine.style.left = '50%';
+  // after horizontals have shrunk, create vertical sides and grow them
+  setTimeout(() => {
+    // place verticals at edges of the bounded area: compute edges where horizontals were (we approximate as 8% padding)
+    const boundedHeight = Math.min(window.innerHeight * 0.6, 360);
+    leftV.style.left = '6px';
+    rightV.style.right = '6px';
+    leftV.style.height = `${boundedHeight}px`;
+    rightV.style.height = `${boundedHeight}px`;
+  }, 420);
+}
+
+/* ---- RESTORED: "I AM COMING" click handler (preserves the original enlarge-transition and then runs takeover + typing) ---- */
+document.getElementById('comingBtn').addEventListener('click', function() {
+  const btn = this;
+  const rect = btn.getBoundingClientRect();
+  // animate button to cover screen as before
+  btn.style.position = 'fixed'; btn.style.left = `${rect.left}px`; btn.style.top = `${rect.top}px`;
+  btn.style.width = `${rect.width}px`; btn.style.height = `${rect.height}px`; btn.style.margin='0';
+  btn.style.padding='0'; btn.style.zIndex='9999';
+  btn.style.transition = 'left 1s ease-in, top 1s ease-in, width 1s ease-in, height 1s ease-in, border-radius 1s ease-in';
+  setTimeout(()=>{ btn.style.left='0'; btn.style.top='0'; btn.style.width='100vw'; btn.style.height='100vh'; btn.style.borderRadius='0'; btn.style.color='transparent'; }, 10);
+  document.body.style.overflow = 'hidden';
+
+  setTimeout(()=> {
+    // show takeover
+    document.querySelector('.content').style.display = 'none';
+    document.querySelector('.bg-texts').style.display = 'none';
+    takeover.style.display = 'block';
+
+    // scale GLAD to fill width and scale WELCOME same ratio
+    const vw = window.innerWidth;
+    const targetGladWidth = Math.floor(vw * 0.94);
+
+    const baseFont = 72;
+    const gladMeasured = measureTextWidth('GLAD TO KNOW THAT!!', 'Inter, sans-serif', baseFont);
+    const welcomeMeasured = measureTextWidth('WELCOME!!', 'Inter, sans-serif', baseFont);
+
+    const multiplier = targetGladWidth / gladMeasured;
+    const safeMultiplier = Math.min(Math.max(multiplier, 0.6), 12);
+    const gladFontSize = Math.max(12, Math.round(baseFont * safeMultiplier));
+    const welcomeFontSize = Math.max(12, Math.round(baseFont * safeMultiplier * 0.55)); // WELCOME smaller ratio visually
+
+    // apply font sizes (used by measure inside typeWriterArc)
+    gladContainer.style.fontSize = `${gladFontSize}px`;
+    welcomeContainer.style.fontSize = `${Math.round(gladFontSize * 0.55)}px`;
+
+    // place arcs vertically so they don't overlap and are centered relative to each other
+    const welcomeTop = Math.round(window.innerHeight * 0.18);
+    const gladTop = Math.round(window.innerHeight * 0.42);
+
+    // type arcs (WELCOME smaller, GLAD big)
+    typeWriterArc(welcomeContainer, 'WELCOME!!', 90, Math.max(36, Math.round(welcomeFontSize * 0.6)), welcomeTop, Math.round(welcomeMeasured * safeMultiplier * 0.7));
+    setTimeout(()=> {
+      typeWriterArc(gladContainer, 'GLAD TO KNOW THAT!!', 70, Math.max(48, Math.round(gladFontSize * 0.9)), gladTop, targetGladWidth);
+    }, 400);
+
+    // ensure about text is placed in section2 with comfortable spacing
+    // center about-text horizontally
+    setTimeout(()=> {
+      // set font-size proportionally
+      aboutText.style.fontSize = `${Math.round(Math.min(88, gladFontSize * 0.5))}px`;
+      // no overlap — section2 is separate, so nothing to push; we ensure visual gap by design
+      scrollMarker.classList.remove('visible');
+    }, 900);
+
+    // enable wheel handler after a short buffer
+    setTimeout(()=> { attachWheelHandler(); }, 1000);
+
+  }, 1100);
+});
+
+/* ===== NEW: CODE FLOOD SEQUENCE (for section3) ===== */
+// create code-flood container inside section3 (hidden initially)
+const codeFlood = document.createElement('pre');
+codeFlood.id = 'code-flood';
+codeFlood.style.position = 'absolute';
+codeFlood.style.top = '0';
+codeFlood.style.left = '0';
+codeFlood.style.right = '0';
+codeFlood.style.bottom = '0';
+codeFlood.style.margin = '20px';
+codeFlood.style.padding = '28px';
+codeFlood.style.overflow = 'hidden';
+codeFlood.style.whiteSpace = 'pre-wrap';
+codeFlood.style.wordBreak = 'break-word';
+codeFlood.style.fontFamily = 'ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace';
+codeFlood.style.fontSize = '12px';
+codeFlood.style.lineHeight = '1.35';
+codeFlood.style.color = '#bcd';
+codeFlood.style.background = 'transparent';
+codeFlood.style.zIndex = '12000';
+codeFlood.style.opacity = '0';
+codeFlood.style.transition = 'opacity 420ms ease';
+section3.appendChild(codeFlood);
+
+// final paragraph element (hidden)
+const finalPara = document.createElement('div');
+finalPara.id = 'final-paragraph';
+finalPara.style.position = 'absolute';
+finalPara.style.top = '50%';
+finalPara.style.left = '50%';
+finalPara.style.transform = 'translate(-50%,-50%)';
+finalPara.style.width = '78%';
+finalPara.style.fontFamily = 'Inter, sans-serif';
+finalPara.style.fontSize = '18px';
+finalPara.style.lineHeight = '1.6';
+finalPara.style.color = '#fff';
+finalPara.style.opacity = '0';
+finalPara.style.transition = 'opacity 420ms ease';
+finalPara.innerText = `
+Dear Seniors of Class 12,
+
+Hey, as your time at Jaipuria School starts wrapping up and those last few pages of your school story come to an end, we—the super excited juniors from Class 11—are over the moon to invite you to "Adios Amigo 2k26." It's this awesome farewell bash we've put together just for you, full of love and good vibes, to send you off as you dive into all the adventures college has in store.
+
+We've gone with a fun Reality Shows theme, so get ready for a night packed with laughs, feels, and all sorts of entertainment that really captures those hallway giggles, the wins we've cheered for in class and on the field, and the friendships that'll stick with us forever.
+
+It all kicks off with The Jaipurian Show to get things rolling, then we'll roll into some hilarious skits about our daily shenanigans, heartfelt songs that'll hit you right in the feels, killer dances full of energy and moves, exciting games to get your adrenaline pumping and spark a little friendly competition, special awards to shout out your awesome talents and what you've brought to the table, and a touching video montage that looks back on all the ups, downs, and epic moments from your senior year.
+
+And to wrap it up on a high note, we'll hook you up with a cool hamper stuffed with little reminders of the fun times and support from your Jaipuria crew as you head out into the world.
+
+Save the date and come join us on February 6th at [Venue] for an evening loaded with surprises, warm toasts, and that real sense of togetherness that makes saying goodbye feel more like "see you later"—because honestly, this isn't just any old farewell; it's our way of celebrating the amazing mark you've made here and all the bright stuff ahead for you.
+
+We seriously can't wait to make this night unforgettable and give you the props you deserve!  
+You are being invited to the most epic send-off ever – don't miss out on the fun!!
+`;
+
+section3.appendChild(finalPara);
+
+// utilities and state for code flood
+let floodInterval = null;
+let purgeInterval = null;
+let floodActive = false;
+
+function randomCodeLine() {
+  const samples = [
+    'for (let i = 0; i < n; i++) { /* process */ }',
+    'const result = await fetch("/api/data").then(r => r.json());',
+    'if (!user.isAuthenticated) throw new Error("unauthorized");',
+    'function renderItem(item) { return `<div>${item.name}</div>` }',
+    'let x = Math.random().toString(36).substring(2, 8);',
+    '/* TODO: refactor this into a pure function */',
+    'printf("Hello, world\\n");',
+    '<div class="card"> <h3>Title</h3> </div>',
+    'SELECT * FROM users WHERE created_at > NOW() - interval \'7 days\';',
+    'class Queue { push(v){ this._arr.push(v) } }',
+    '// ephemeral log: ' + new Date().toISOString()
+  ];
+  return samples[Math.floor(Math.random() * samples.length)];
+}
+
+function startCodeFloodSequence() {
+  if (floodActive) return;
+  floodActive = true;
+  codeFlood.innerText = '';
+  finalPara.style.opacity = '0';
+  codeFlood.style.opacity = '1';
+
+  // slowly append lines until filled (append at bottom)
+  floodInterval = setInterval(() => {
+    const line = randomCodeLine();
+    codeFlood.innerText += line + '\n';
+    // keep scroll anchored to bottom
+    codeFlood.scrollTop = codeFlood.scrollHeight;
+    // detect filled state: when content height exceeds container height by some threshold
+    if (codeFlood.scrollHeight > codeFlood.clientHeight * 1.02 && codeFlood.innerText.split('\n').length > 12) {
+      clearInterval(floodInterval);
+      floodInterval = null;
+      // small pause, then start purging from top
+      setTimeout(startPurgingTop, 800);
+    }
+  }, 36);
+}
+
+function startPurgingTop() {
+  // remove lines from the top gradually until empty
+  purgeInterval = setInterval(() => {
+    const lines = codeFlood.innerText.split('\n');
+       if (lines.length <= 1) {
+      clearInterval(purgeInterval);
+      purgeInterval = null;
+      // hide flood and show final paragraph
+      codeFlood.style.opacity = '0';
+      setTimeout(() => {
+        codeFlood.innerText = '';
+        finalPara.style.opacity = '1';
+        floodActive = false;
+        // show coupon button only after final paragraph appears
+        if (typeof showCoupon === 'function') {
+          // let the paragraph's opacity settle, then reveal coupon
+          setTimeout(showCoupon, 300);
+        }
+      }, 420);
+      return;
+    }
+
+    // drop 2 lines each tick for reasonable speed
+    const remaining = lines.slice(2).join('\n');
+    codeFlood.innerText = remaining;
+    codeFlood.scrollTop = codeFlood.scrollHeight;
+  }, 120);
+}
+
+function cancelCodeFlood() {
+  if (floodInterval) { clearInterval(floodInterval); floodInterval = null; }
+  if (purgeInterval) { clearInterval(purgeInterval); purgeInterval = null; }
+  codeFlood.innerText = '';
+  codeFlood.style.opacity = '0';
+  finalPara.style.opacity = '0';
+  floodActive = false;
+}
+
+/* ---- PAGINATION + BOUNDARY BEHAVIOR (updated to trigger code flood when entering section3) ---- */
+
+// central function to go to page index (0..MAX_PAGE)
+function goToPage(target) {
+  if (animatingSlide || target < 0 || target > MAX_PAGE || target === currentPage) return;
+  animatingSlide = true;
+  // move all sections by -100vh * target
+  const t = -100 * target;
+  section1.style.transform = `translateY(${t}vh)`;
+  section2.style.transform = `translateY(${t}vh)`;
+  section3.style.transform = `translateY(${t}vh)`;
+  // visual sync: boundary movement depends on target transitions
+  if (target === 1 && currentPage === 0) {
+    // entering section2: place and expand horizontals
+    positionBoundaryInitial();
+    // slight delay so user perceives the arc typing first
+    setTimeout(() => { expandHorizontals(); }, 260);
+  } else if (target === 2 && currentPage === 1) {
+    // moving deeper: make boundary descend with the flow
+    descendBoundary();
+    // after descent finishes, trigger closing motion
+    setTimeout(() => { closeRectangle(); }, 820);
+    // and start the code flood on section3 (after a tiny delay so transform is visible)
+    setTimeout(() => {
+      // ensure placeholder hidden and code-flood visible
+      const placeholder = document.getElementById('section3-placeholder');
+      if (placeholder) placeholder.style.opacity = '0';
+      startCodeFloodSequence();
+    }, 520);
+    } else if (target === 0) {
+    // returning to top: reset boundary
+    boundary.style.transition = 'top 360ms ease';
+    positionBoundaryInitial();
+    resetBoundaryToCenter();
+    // cancel any code flood running
+    cancelCodeFlood();
+    // restore placeholder visibility
+    const placeholder = document.getElementById('section3-placeholder');
+    if (placeholder) placeholder.style.opacity = '1';
+    // hide coupon when returning to the top
+    if (typeof hideCoupon === 'function') hideCoupon();
+  } else {
+    // moving between other pages: cancel code flood
+    cancelCodeFlood();
+  }
+  // update page after transition
+  setTimeout(() => {
+    animatingSlide = false;
+    currentPage = target;
+    updateMarker();
+  }, 760);
+}
+
+// wheel handler attached to takeover (now paginated)
+function onTakeoverWheel(e) {
+  if (animatingSlide) { e.preventDefault(); return; }
+  const delta = e.deltaY;
+  if (delta > 20) { // wheel down -> next page
+    e.preventDefault();
+    goToPage(Math.min(MAX_PAGE, currentPage + 1));
+  } else if (delta < -20) { // wheel up -> prev page
+    e.preventDefault();
+    goToPage(Math.max(0, currentPage - 1));
+  }
+}
+
+function attachWheelHandler() {
+  takeover.removeEventListener('wheel', onTakeoverWheel, { passive: false });
+  takeover.addEventListener('wheel', onTakeoverWheel, { passive: false });
+  // touch swipe (improved)
+  let touchStartY = null;
+  takeover.addEventListener('touchstart', (ev)=> { touchStartY = ev.touches && ev.touches[0] ? ev.touches[0].clientY : null; }, { passive: true });
+  takeover.addEventListener('touchend', (ev)=> {
+    if (touchStartY === null) return;
+    const endY = (ev.changedTouches && ev.changedTouches[0]) ? ev.changedTouches[0].clientY : null;
+    if (endY === null) return;
+    const diff = touchStartY - endY;
+    if (diff > 40) goToPage(Math.min(MAX_PAGE, currentPage + 1));
+    if (diff < -40) goToPage(Math.max(0, currentPage - 1));
+    touchStartY = null;
+  }, { passive: true });
+}
+
+// update marker visibility: show only when we're past the first page
+function updateMarker() {
+  if (currentPage >= 1) scrollMarker.classList.add('visible');
+  else scrollMarker.classList.remove('visible');
+}
+
+        // initial confetti & background
+    window.addEventListener('load', function() {
+      // Attempt to play the popper audio on load. If autoplay is blocked, show the
+      // tiny "Tap to enable sound" prompt so user can explicitly enable audio.
+      playPopper()
+        .catch(() => {
+          // autoplay blocked — show unobtrusive enable prompt
+          const prompt = document.getElementById('enable-sound');
+          if (prompt) {
+            prompt.style.display = 'block';
+            const kickoff = () => {
+              // resume audioContext if suspended
+              if (audioCtx && typeof audioCtx.resume === 'function') audioCtx.resume().catch(()=>{});
+              // try to play audio element again; if still blocked, use synth fallback (user gesture)
+              tryPlayFallbackWithGesture('popperAudio', synthPopper);
+              // hide prompt and remove listeners
+              prompt.style.display = 'none';
+              prompt.removeEventListener('click', kickoff);
+              document.removeEventListener('keydown', kickoff);
+            };
+            prompt.addEventListener('click', kickoff, { once:true });
+            document.addEventListener('keydown', kickoff, { once:true });
+          }
+        });
+
+confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, zIndex: 20020 });
+
+      populateBgTexts();
+    });
+
+
+    // cleanup on unload
+    window.addEventListener('beforeunload', () => { cancelBgAnimation(); });
+  </script>
+</body>
+</html>
